@@ -11,12 +11,12 @@ public class FilmeController : ControllerBase
     private static List<Filme> filmes = new List<Filme>();
     private static int id = 0;
     [HttpPost]
-    public void AdicionarFilme([FromBody] Filme filme)
+    public IActionResult AdicionarFilme([FromBody] Filme filme)
     {
         filme.Id = id++;
         filmes.Add(filme);
-        Console.WriteLine(filme.Titulo);
-        Console.WriteLine(filme.Duracao);
+        //aqui está passando o id do objeto criado no post e retornando ele mesmo
+        return CreatedAtAction(nameof(RecuperaFilmePorID), new { id = filme.Id }, filme);
     }
 
     [HttpGet]
@@ -25,10 +25,14 @@ public class FilmeController : ControllerBase
         return filmes.Skip(skip).Take(take);
     }
 
+    //espera receber um id como parâmetro
     [HttpGet("{id}")]
-    public Filme? RecuperaFilmePorID(int id)
+    //IActionResult quer dizer que é um resultado de uma ação que foi executada
+    public IActionResult RecuperaFilmePorID(int id)
     {
-        return filmes.FirstOrDefault(Filme => Filme.Id == id);
-
+        var filme = filmes.FirstOrDefault(Filme => Filme.Id == id);
+        if (filme == null) return NotFound();
+        //da pra passar a variavel no "ok" para retornar algo
+        return Ok(filme);
     }
 }
