@@ -1,4 +1,12 @@
+using FilmesApi.Data;
+using Microsoft.EntityFrameworkCore;
+//Add-Migration CriandoTabelaDeFilme cria uma migration
+//Update-Database cria a tabela no banco
+
 var builder = WebApplication.CreateBuilder(args);
+var connectionstring = builder.Configuration.GetConnectionString("FilmeConnection");
+
+builder.Services.AddDbContext<FilmeContext>(opts => opts.UseMySql(connectionstring, ServerVersion.AutoDetect(connectionstring)));
 
 // Add services to the container.
 
